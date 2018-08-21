@@ -29,6 +29,7 @@ def call(int buildNumber) {
             echo "The build number is odd"
           }
         }
+      }
          stages {
         stage('build') {
           steps {
