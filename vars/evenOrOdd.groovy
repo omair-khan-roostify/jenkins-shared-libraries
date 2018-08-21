@@ -5,7 +5,7 @@ def call(int buildNumber) {
       stages {
         stage('build') {
           steps {
-            sh "./gradlew -b spring-boot-project/build.gradle test"
+            sh "./gradlew -b spring-boot-project/build.gradle"
           }
         }
       }
