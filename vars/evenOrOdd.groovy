@@ -78,7 +78,9 @@ pipeline {
                 }
             }
         
-        
+    }
+}
+}
 
      /*   stage('Dockerize') {
             steps {
@@ -117,7 +119,7 @@ pipeline {
 /*
 This method will create a tag for the docker image from the GIT branch and Jenkins build number
 Example format is origin-feature-jj-jenkins-23
-*//*
+*/
 def computeBuildTag(){
     def dateFormat = new SimpleDateFormat("yyyyMMddHHmm")
     def date = new Date()
@@ -131,7 +133,7 @@ def computeBuildTag(){
 /*
 This Method is a place holder for the image name.
 Every new microservice project will need to overide this name to suite the app name.
-
+*/
 def getDockerImageName(){
     return 'roostify/ppe-engine'
 }
@@ -140,4 +142,4 @@ def getRepoName(){
     def repo = "${env.GIT_URL}"
     repo_val = repo.replaceAll('https://github.com/', '').replaceAll('.git', '')
     return repo_val;
-}*/
+}
