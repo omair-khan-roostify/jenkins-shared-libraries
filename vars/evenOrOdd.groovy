@@ -5,7 +5,7 @@ def call(int buildNumber) {
       stages {
         stage('build') {
           steps {
-            sh "./gradlew build.gradle"
+            sh "./gradlew -b build.gradle"
           }
         }
       }
