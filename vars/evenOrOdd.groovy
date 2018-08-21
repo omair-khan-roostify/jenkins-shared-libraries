@@ -39,4 +39,3 @@ def call(int buildNumber) {
       }
     }
   }
-}
