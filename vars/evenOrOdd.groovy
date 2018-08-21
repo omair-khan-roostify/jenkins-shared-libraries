@@ -16,8 +16,8 @@ def call(int buildNumber) {
           }
         }
       }
-    
-  } 
+    }
+  }
     else {
     pipeline {
       agent any
