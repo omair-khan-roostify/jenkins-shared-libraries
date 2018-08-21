@@ -1,3 +1,18 @@
+/*
+Author - jruben@roostify.com
+Date   - 04/20/2018
+This is a common jenkins pipeline for Java microservices.
+The sequence of stages are
+    1. Checkout     -- Checksout code from GIT.
+    2. Clean        -- Cleans project directory.
+    3. compile      -- Compile code.
+    4. Build        -- Build code minus the tests
+    5. Test         -- Run unit tests
+    6. Sonar Analysis -- Runs code analysis and pushes it to sonarQube
+    6. Dockerize    -- Create a docker image of the project
+    7. Docker push  -- Push the created container to Amazon ECR.
+*/
+
 import java.text.SimpleDateFormat
 
 def call(Map map) {
@@ -45,7 +60,7 @@ pipeline {
 
         stage ('Sonar Analysis') {
             steps {
-            if(map.containsKey() == isSonarNeeded && map.get(isSonarNeeded) == true){
+            if(map.containsKey("isSonarNeeded") && map.get("isSonarNeeded") == true){
                 script {
                 if (env.GIT_BRANCH == 'develop') {
                     sh "./gradlew -b roostify-product-pricing/build.gradle sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD}"
@@ -65,9 +80,9 @@ pipeline {
         
         
 
-        stage('Dockerize') {
+     /*   stage('Dockerize') {
             steps {
-                if(map.containsKey(isDockerizeNeeded) == true && map.get(isDockerizeNeeded) == true){
+                if(map.containsKey("isDockerizeNeeded")  && map.get("isDockerizeNeeded") == true){
                 // The below eval was added to escape the 12 hour login issue window on AWS. This will not get new credentials on every build on Jenkins.
                 sh "eval `aws ecr get-login --no-include-email --region us-west-1 | sed 's|https://||'`"
                 sh "./gradlew -b roostify-product-pricing/docker.gradle createDockerImage"
@@ -79,10 +94,10 @@ pipeline {
         /*
         The ECR credentials are present in the global variables of Jenkins.
         This way this code can work even when the credentials change.
-        */
+        *
         stage('Docker Push') {
             steps {
-                if(map.containsKey() == isDockerPushNeeded && map.get(isDockerPushNeeded) == true){
+                if(map.containsKey("isDockerPushNeeded") && map.get("isDockerPushNeeded") == true){
                 script {
                     def registryUrl = "${env.DOCKER_REGISTRY_URL}"
                     def registryCredentialsId = "${env.DOCKER_REGISTRY_CREDENTIALS}"
