@@ -11,7 +11,6 @@ def call(int buildNumber) {
           }
         }
       }
-         stages {
         stage('build') {
           steps {
             sh "./gradlew clean build"
@@ -19,7 +18,7 @@ def call(int buildNumber) {
         }
       }
     }
-  } else {
+    else {
     pipeline {
       agent any
       stages {
