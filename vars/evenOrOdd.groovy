@@ -102,7 +102,7 @@ pipeline {
 This method will create a tag for the docker image from the GIT branch and Jenkins build number
 Example format is origin-feature-jj-jenkins-23
 */
-def computeBuildTag(){
+/*def computeBuildTag(){
     def dateFormat = new SimpleDateFormat("yyyyMMddHHmm")
     def date = new Date()
 
@@ -110,7 +110,7 @@ def computeBuildTag(){
     buildTag = buildTag.replaceAll('\\/','-')
     buildTag = buildTag+"-"+dateFormat.format(date)
     return buildTag
-}
+}*/
 
 /*
 This Method is a place holder for the image name.
