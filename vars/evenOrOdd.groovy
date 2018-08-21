@@ -16,14 +16,112 @@ pipeline {
                     echo 'Checking out code from git repo'
                     checkout scm
                   }
-        }
-        stage('Clean')
+            }
+        
+          stage('Clean')
             {
                 steps
                     {
                         sh "./gradlew -b roostify-product-pricing/build.gradle clean"
                     }
             }
-      }      
+        
+          stage('Compile')
+          {
+              steps
+                  {
+                     sh "./gradlew -b roostify-product-pricing/build.gradle compileJava"
+                  }
+          }
+          
+          stage('Build')
+          {
+              steps
+                  {
+                    sh "./gradlew -b roostify-product-pricing/build.gradle build -x test -i"  
+                  }
+          }
+          
+          stage ('Test') 
+          {
+            steps 
+                {
+                    sh "./gradlew -b roostify-product-pricing/build.gradle test"
+                } 
+          }
+        
+          /*stage ('Sonar Analysis') 
+          {
+            steps {
+                script {
+                if (env.GIT_BRANCH == 'develop') {
+                    sh "./gradlew -b roostify-product-pricing/build.gradle sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD}"
+                }else if (env.CHANGE_ID){
+                    echo 'This is a PR build. Running sonnar preview analysis'
+                    sh "./gradlew -b roostify-product-pricing/build.gradle sonar -Dsonar.github.pullRequest=${env.CHANGE_ID} -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD} -Dsonar.analysis.mode=preview -Dsonar.github.oauth=68eb8d979fe364931397bf39faa671159e5926ec -Dsonar.github.repository=${env.CUSTOM_SONAR_REPO_NAME} -i"
+                }
+                    else{
+                    echo 'This is a branch build.'
+                    sh "./gradlew -b roostify-product-pricing/build.gradle sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD} -Dsonar.github.repository=${env.CUSTOM_SONAR_REPO_NAME} -Dsonar.branch=${env.GIT_BRANCH} -i"
+                        }
+                       }
+                }
+        }
+          
+        stage('Dockerize') 
+          {
+            steps 
+              {
+                // The below eval was added to escape the 12 hour login issue window on AWS. This will not get new credentials on every build on Jenkins.
+                sh "eval `aws ecr get-login --no-include-email --region us-west-1 | sed 's|https://||'`"
+                sh "./gradlew -b roostify-product-pricing/docker.gradle createDockerImage"
+              }
+            }
+        /*
+        The ECR credentials are present in the global variables of Jenkins.
+        This way this code can work even when the credentials change.
+        *
+        stage('Docker Push') {
+            steps {
+                script {
+                    def registryUrl = "${env.DOCKER_REGISTRY_URL}"
+                    def registryCredentialsId = "${env.DOCKER_REGISTRY_CREDENTIALS}"
+                    def buildTag = computeBuildTag()
+                    docker.withRegistry(registryUrl,registryCredentialsId) 
+                    {
+                        docker.image(getDockerImageName()).push(buildTag)
+                    }
+                }
+            }      
+        }*/
+      }
     }
-  }
+}
+
+/*
+This method will create a tag for the docker image from the GIT branch and Jenkins build number
+Example format is origin-feature-jj-jenkins-23
+*/
+def computeBuildTag(){
+    def dateFormat = new SimpleDateFormat("yyyyMMddHHmm")
+    def date = new Date()
+
+    def buildTag = "${env.GIT_BRANCH}-${BUILD_NUMBER}"
+    buildTag = buildTag.replaceAll('\\/','-')
+    buildTag = buildTag+"-"+dateFormat.format(date)
+    return buildTag
+}
+
+/*
+This Method is a place holder for the image name.
+Every new microservice project will need to overide this name to suite the app name.
+*/
+def getDockerImageName(){
+    return 'roostify/ppe-engine'
+}
+
+def getRepoName(){
+    def repo = "${env.GIT_URL}"
+    repo_val = repo.replaceAll('https://github.com/', '').replaceAll('.git', '')
+    return repo_val;
+}
