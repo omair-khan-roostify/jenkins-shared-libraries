@@ -60,6 +60,10 @@ pipeline {
 
         stage ('Sonar Analysis') {
             steps {
+                when
+                {
+                    expression{return "isSonarNeeded"}      
+                }
             if(map.containsKey("isSonarNeeded") && map.get("isSonarNeeded") == true){
                 script {
                 if (env.GIT_BRANCH == 'develop') {
