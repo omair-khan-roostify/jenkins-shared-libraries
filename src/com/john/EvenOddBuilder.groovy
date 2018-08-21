@@ -1,6 +1,6 @@
 package com.john
 
-class Pipeline {
+class EvenOddBuilder {
 
   def evenOrOdd(int buildNumber) {
   if (buildNumber % 2 == 0) {
