@@ -140,4 +140,4 @@ def getRepoName(){
     def repo = "${env.GIT_URL}"
     repo_val = repo.replaceAll('https://github.com/', '').replaceAll('.git', '')
     return repo_val;
-}
+}*/
