@@ -1,15 +1,5 @@
 
 def call(int buildNumber) {
-   pipeline {
-      agent any
-      stages {
-        stage('build') {
-          steps {
-            sh "./gradlew clean build"
-          }
-        }
-      }
-    }
 
   if (buildNumber % 2 == 0) {
     pipeline {
@@ -20,6 +10,13 @@ def call(int buildNumber) {
             echo "The build number is even"
           }
         }
+         stages {
+        stage('build') {
+          steps {
+            sh "./gradlew clean build"
+          }
+        }
+      }
       }
     }
   } else {
@@ -31,6 +28,13 @@ def call(int buildNumber) {
             echo "The build number is odd"
           }
         }
+         stages {
+        stage('build') {
+          steps {
+            sh "./gradlew clean build"
+          }
+        }
+      }
       }
     }
   }
