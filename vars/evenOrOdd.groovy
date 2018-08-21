@@ -10,7 +10,6 @@ def call(int buildNumber) {
             echo "The build number is even"
           }
         }
-      }
         stage('build') {
           steps {
             sh "./gradlew clean build"
@@ -27,14 +26,11 @@ def call(int buildNumber) {
             echo "The build number is odd"
           }
         }
-      }
-         stages {
         stage('build') {
           steps {
             sh "./gradlew clean build"
           }
         }
-      }
       }
     }
   }
