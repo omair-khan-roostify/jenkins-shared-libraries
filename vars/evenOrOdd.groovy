@@ -60,12 +60,8 @@ pipeline {
 
         stage ('Sonar Analysis') {
             steps {
-                when
-                {
-                    expression{return "isSonarNeeded"}      
-                }
-            if(map.containsKey("isSonarNeeded") && map.get("isSonarNeeded") == true){
                 script {
+                if(map.containsKey("isSonarNeeded") && map.get("isSonarNeeded") == true){
                 if (env.GIT_BRANCH == 'develop') {
                     sh "./gradlew -b roostify-product-pricing/build.gradle sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD}"
                 }else if (env.CHANGE_ID){
@@ -77,8 +73,6 @@ pipeline {
                             }
                        }
                     }
-                else
-                    continue 
                 }
             }
         
