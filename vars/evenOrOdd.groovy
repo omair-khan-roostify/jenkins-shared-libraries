@@ -55,6 +55,8 @@ pipeline {
         stage ('Test') {
             steps {
                 sh "./gradlew -b roostify-product-pricing/build.gradle test"
+                echo map.size()
+                echo "omairk345"
             }
         }
 
