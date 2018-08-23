@@ -16,6 +16,11 @@ The sequence of stages are
 import java.text.SimpleDateFormat
 
 def call(Map map) {
+    if(map == null){
+        println("Map is null")
+    }else{
+        println("The map size is "+map.size())
+    }
 pipeline {
     agent any
 
