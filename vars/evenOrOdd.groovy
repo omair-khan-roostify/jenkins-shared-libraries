@@ -55,15 +55,13 @@ pipeline {
         stage ('Test') {
             steps {
                 sh "./gradlew -b roostify-product-pricing/build.gradle test"
-                echo map.size()
-                echo "omairk345"
             }
         }
 
         stage ('Sonar Analysis') {
             steps {
                 script {
-                if(map.containsKey() == true && map.get("isSonarNeeded") == true){
+                if(map.containsKey("isSonarNeeded") && map.get("isSonarNeeded") == true){
                 if (env.GIT_BRANCH == 'develop') {
                     sh "./gradlew -b roostify-product-pricing/build.gradle sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD}"
                 }else if (env.CHANGE_ID){
