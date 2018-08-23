@@ -36,25 +36,25 @@ pipeline {
 
         stage ('Clean') {
             steps {
-                sh "./gradlew clean"
+                sh "gradle clean"
             }
         }
 
         stage ('Compile') {
             steps {
-                sh "./gradlew compileJava"
+                sh "gradle compileJava"
             }
         }
 
         stage ('Build') {
             steps {
-                sh "./gradlew build -x test -i"
+                sh "gradle build -x test -i"
             }
         }
 
         stage ('Test') {
             steps {
-                sh "./gradlew test"
+                sh "gradle test"
             }
         }
 
@@ -63,10 +63,10 @@ pipeline {
                 script {
                 if(map.containsKey("isSonarNeeded") && map.get("isSonarNeeded") == true){
                 if (env.GIT_BRANCH == 'develop') {
-                    sh "./gradlew sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD}"
+                    sh "gradle sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD}"
                 }else if (env.CHANGE_ID){
                     echo 'This is a PR build. Running sonnar preview analysis'
-                    sh "./gradlew sonar -Dsonar.github.pullRequest=${env.CHANGE_ID} -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD} -Dsonar.analysis.mode=preview -Dsonar.github.oauth=68eb8d979fe364931397bf39faa671159e5926ec -Dsonar.github.repository=${env.CUSTOM_SONAR_REPO_NAME} -i"
+                    sh "gradle sonar -Dsonar.github.pullRequest=${env.CHANGE_ID} -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD} -Dsonar.analysis.mode=preview -Dsonar.github.oauth=68eb8d979fe364931397bf39faa671159e5926ec -Dsonar.github.repository=${env.CUSTOM_SONAR_REPO_NAME} -i"
                 }else{
                     echo 'This is a branch build.'
                     sh "./gradlew -b roostify-product-pricing/build.gradle sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_PASSWORD} -Dsonar.github.repository=${env.CUSTOM_SONAR_REPO_NAME} -Dsonar.branch=${env.GIT_BRANCH} -i"
